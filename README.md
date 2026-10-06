@@ -74,19 +74,21 @@ Screen, or inside one specific app.
 | **Places** | Anywhere, At Home Screen, In Apps, At Lock Screen, In Specific Apps |
 | **Extras** | Sequences with pauses, menus, profiles, export / import, block list, action banners, local API and `triggr` command |
 
-## Supported devices
+## Tested devices
 
-| Chip | Architecture | Buttons | Tested on |
+Triggr supports every arm64 and arm64e iPhone and iPad on iOS 15–18 with a
+rootless jailbreak (Dopamine). It has been tested on:
+
+| Chip | Architecture | Buttons | iOS |
 |---|---|---|---|
-| A10 | arm64 | Home button / Touch ID | iOS 15.8.6 |
-| A11 | arm64 | Home button / Touch ID | iOS 16.7 |
-| A13 | arm64e | Home button / Touch ID | iOS 17.5.1 |
-| A13 | arm64e | Face ID | iOS 18.6.2 |
+| A10 | arm64 | Home button / Touch ID | 15.8.6 |
+| A11 | arm64 | Home button / Touch ID | 16.7 |
+| A13 | arm64e | Home button / Touch ID | 17.5.1 |
+| A13 | arm64e | Face ID | 18.6.2 |
 
-Every build is arm64 + arm64e, so A12 and newer are supported. On Face ID devices
-the Home button and Touch ID groups are hidden and the lock button is the **Side
-Button**. If anything ever lands you in safe mode, uninstall Triggr from your
-package manager and please [report it](../../issues/new/choose).
+On Face ID devices the Home button and Touch ID groups are hidden and the lock
+button is the **Side Button**. If anything ever lands you in safe mode, uninstall
+Triggr from your package manager and please [report it](../../issues/new/choose).
 
 ## Documentation
 
