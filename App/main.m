@@ -2,13 +2,14 @@
 // settings bundle, so both always show and change the same assignments.
 #import <UIKit/UIKit.h>
 #import <dlfcn.h>
+#import "../Shared/TGPaths.h"
 
 @interface TGAppDelegate : UIResponder <UIApplicationDelegate>
 @property (nonatomic, strong) UIWindow *window;
 @end
 
 static NSString *TGBundlePath(void) {
-    for (NSString *path in @[@"/var/jb/Library/PreferenceBundles/Triggr.bundle", @"/Library/PreferenceBundles/Triggr.bundle"])
+    for (NSString *path in @[TGJB(@"/Library/PreferenceBundles/Triggr.bundle"), @"/Library/PreferenceBundles/Triggr.bundle"])
         if ([NSFileManager.defaultManager fileExistsAtPath:path]) return path;
     return nil;
 }

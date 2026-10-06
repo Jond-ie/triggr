@@ -1,3 +1,4 @@
+#import "TGPaths.h"
 // The single catalogue of modes, triggers and actions, shared by Settings and
 // the tweak so the two can never disagree about ids.
 //
@@ -179,7 +180,7 @@ static const TGGroup TGActionGroups[] = {
 // writes the names it sees to this file and answers with the second notification.
 #define TGAirPlayListRequest "com.johndie.triggr/airplay-list"
 #define TGAirPlayListReady "com.johndie.triggr/airplay-list-ready"
-#define TGAirPlayListPath @"/var/jb/var/mobile/Library/Preferences/com.johndie.triggr.airplay.plist"
+#define TGAirPlayListPath TGJB(@"/var/mobile/Library/Preferences/com.johndie.triggr.airplay.plist")
 
 // Settings pages for "Open Settings Page" (App-prefs:<id>, verified to open Settings on iOS 16.7).
 static const TGItem TGSettingsPages[] = {
@@ -392,29 +393,35 @@ static inline NSString *TGAssignmentKey(NSString *mode, NSString *trigger) {
 #define TGRunRequestNotification "com.johndie.triggr/run-request"
 
 static inline NSString *TGExtensionsDirectory(void) {
-    for (NSString *path in @[@"/var/jb/Library/Triggr/Extensions", @"/Library/Triggr/Extensions"])
+    for (NSString *path in @[TGJB(@"/Library/Triggr/Extensions"), @"/Library/Triggr/Extensions"])
         if ([NSFileManager.defaultManager fileExistsAtPath:path]) return path;
     return nil;
 }
 
+// No extensions installed = no Extensions folder: TGExtensionsDirectory() is nil then. Never hand an empty path to
+// contentsOfDirectoryAtPath: — NSFileManager throws on "" (1.0.4 crashed the action picker on every install without
+// EQELinker; issue #2 by 777qwq found it on RootHide).
 static inline NSArray<NSString *> *TGExtensionNames(void) {
     NSMutableArray *names = [NSMutableArray array];
-    for (NSString *file in [NSFileManager.defaultManager contentsOfDirectoryAtPath:TGExtensionsDirectory() ?: @"" error:nil])
+    NSString *dir = TGExtensionsDirectory();
+    if (!dir.length) return names;
+    for (NSString *file in [NSFileManager.defaultManager contentsOfDirectoryAtPath:dir error:nil])
         if ([file.pathExtension isEqualToString:@"plist"]) [names addObject:file.stringByDeletingPathExtension];
     return [names sortedArrayUsingSelector:@selector(localizedStandardCompare:)];
 }
 
 // {Title, ItemTitle, Symbol, Color, ItemsDirectory, ItemsExtension, ItemsExclude, Program}
 static inline NSDictionary *TGExtension(NSString *name) {
-    if (!name.length || [name containsString:@"/"]) return nil;
-    NSDictionary *extension = [NSDictionary dictionaryWithContentsOfFile:[[TGExtensionsDirectory() stringByAppendingPathComponent:name] stringByAppendingPathExtension:@"plist"]];
+    NSString *dir = TGExtensionsDirectory();
+    if (!name.length || [name containsString:@"/"] || !dir.length) return nil;
+    NSDictionary *extension = [NSDictionary dictionaryWithContentsOfFile:[[dir stringByAppendingPathComponent:name] stringByAppendingPathExtension:@"plist"]];
     return [extension[@"Title"] isKindOfClass:NSString.class] && [extension[@"Program"] isKindOfClass:NSString.class] ? extension : nil;
 }
 
 static inline NSArray<NSString *> *TGExtensionItems(NSDictionary *extension) {
     NSString *directory = extension[@"ItemsDirectory"], *type = extension[@"ItemsExtension"];
     NSArray *exclude = [extension[@"ItemsExclude"] isKindOfClass:NSArray.class] ? extension[@"ItemsExclude"] : @[];
-    if (![directory isKindOfClass:NSString.class]) return @[];
+    if (![directory isKindOfClass:NSString.class] || !directory.length) return @[]; // "" would throw too
     NSMutableArray *items = [NSMutableArray array];
     for (NSString *file in [NSFileManager.defaultManager contentsOfDirectoryAtPath:directory error:nil]) {
         if ([type isKindOfClass:NSString.class] && type.length && ![file.pathExtension isEqualToString:type]) continue;

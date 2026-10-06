@@ -1,9 +1,10 @@
 #!/bin/sh
+# Rootless: the jailbreak is under /var/jb. RootHide: its own tools (this
+# script included) see the jailbreak folder as "/", so there's no prefix.
+JB=/var/jb; [ -d /var/jb/Library ] || JB=""
 # Show (or refresh) the Triggr app on the Home Screen.
-for p in /var/jb/Applications/TriggrApp.app /Applications/TriggrApp.app; do
-	[ -d "$p" ] && uicache -p "$p" >/dev/null 2>&1
-done
+[ -d "$JB/Applications/TriggrApp.app" ] && uicache -p "$JB/Applications/TriggrApp.app" >/dev/null 2>&1
 # (Re)start triggrd, which runs commands where SpringBoard can't (iOS 18).
-launchctl unload /var/jb/Library/LaunchDaemons/com.johndie.triggrd.plist 2>/dev/null
-launchctl load /var/jb/Library/LaunchDaemons/com.johndie.triggrd.plist 2>/dev/null
+launchctl unload "$JB/Library/LaunchDaemons/com.johndie.triggrd.plist" 2>/dev/null
+launchctl load "$JB/Library/LaunchDaemons/com.johndie.triggrd.plist" 2>/dev/null
 exit 0

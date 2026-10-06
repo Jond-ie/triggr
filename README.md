@@ -8,7 +8,7 @@
 <p align="center">
   <a href="https://jond-ie.github.io/repo/"><img src="https://img.shields.io/badge/Install-John's%20Repo-blue" alt="Install from John's Repo"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="GPL-3.0"></a>
-  <img src="https://img.shields.io/badge/version-1.0.4-informational" alt="Version 1.0.4">
+  <img src="https://img.shields.io/badge/version-1.0.4.1-informational" alt="Version 1.0.4.1">
 </p>
 
 Press, tap, flick, pinch, shake or wave, and Triggr runs what you picked: go

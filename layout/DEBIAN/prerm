@@ -1,9 +1,8 @@
 #!/bin/sh
-launchctl unload /var/jb/Library/LaunchDaemons/com.johndie.triggrd.plist 2>/dev/null
+JB=/var/jb; [ -d /var/jb/Library ] || JB=""
+launchctl unload "$JB/Library/LaunchDaemons/com.johndie.triggrd.plist" 2>/dev/null
 # Take the Triggr app off the Home Screen before its files go.
 if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
-	for p in /var/jb/Applications/TriggrApp.app /Applications/TriggrApp.app; do
-		[ -d "$p" ] && uicache -u "$p" >/dev/null 2>&1
-	done
+	[ -d "$JB/Applications/TriggrApp.app" ] && uicache -u "$JB/Applications/TriggrApp.app" >/dev/null 2>&1
 fi
 exit 0

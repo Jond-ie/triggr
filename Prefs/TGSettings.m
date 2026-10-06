@@ -780,7 +780,7 @@ static NSString *TGCategoryOf(NSString *action) {
     } else if ([category isEqualToString:@"text"]) {
         [rows addObject:[self rowForCommand:TGMessagePrefix title:@"Show Message…" prompt:@"Text to show in an alert"]];
         [rows addObject:[self rowForCommand:TGSpeakPrefix title:@"Speak Text…" prompt:@"Text for the device to say"]];
-        [rows addObject:[self rowForCommand:TGShellPrefix title:@"Run Command…" prompt:@"Shell command. Runs with /var/jb/bin/sh -c as the mobile user."]];
+        [rows addObject:[self rowForCommand:TGShellPrefix title:@"Run Command…" prompt:@"Shell command. Runs with the jailbreak's sh -c as the mobile user."]];
     } else if ([category isEqualToString:@"menus"] && !_menuEditor) {
         for (NSDictionary *menu in TGReadMenus())
             [rows addObject:[self rowForAction:[TGMenuPrefix stringByAppendingString:menu[@"id"]] title:[menu[@"name"] description]]];

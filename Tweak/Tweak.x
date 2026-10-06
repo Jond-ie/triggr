@@ -25,6 +25,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "../Shared/TGCatalog.h"
 #import "../Shared/TGHardware.h"
+#import "../Shared/TGPaths.h"
 #import "../Shared/TGRelay.h"
 
 @interface SBLockScreenManager : NSObject
@@ -240,7 +241,7 @@ static void TGOpenURL(NSString *string) {
 
 // Runs as mobile (SpringBoard's user), detached, output discarded.
 // Starts the jailbreak's sh with these arguments (mobile user's PATH, no I/O).
-// iOS 18's SpringBoard may refuse /var/jb/bin/sh by its symlinked path; the
+// iOS 18's SpringBoard may refuse the jailbreak's sh by its symlinked path; the
 // same file by its real path is allowed, so that's tried next.
 static BOOL tgSpawnRefused; // SpringBoard may not start programs here (iOS 18): use triggrd
 
@@ -252,12 +253,12 @@ static int TGSpawnShell(const char *const argv[], pid_t *pid) {
     posix_spawn_file_actions_addopen(&actions, STDOUT_FILENO, "/dev/null", O_WRONLY, 0);
     posix_spawn_file_actions_addopen(&actions, STDERR_FILENO, "/dev/null", O_WRONLY, 0);
     // SpringBoard's environment has no rootless PATH; give commands one.
-    const char *envp[] = {"PATH=/var/jb/usr/local/bin:/var/jb/usr/bin:/var/jb/bin:/var/jb/usr/sbin:/var/jb/sbin:/usr/bin:/bin:/usr/sbin:/sbin",
-                          "HOME=/var/mobile", "USER=mobile", "LANG=en_US.UTF-8", NULL};
-    int error = posix_spawn(pid, "/var/jb/bin/sh", &actions, NULL, (char *const *)argv, (char *const *)envp);
+    const char *envp[] = {TG_SHELL_PATH, "HOME=/var/mobile", "USER=mobile", "LANG=en_US.UTF-8", NULL};
+    const char *shell = TGJB(@"/bin/sh").fileSystemRepresentation;
+    int error = posix_spawn(pid, shell, &actions, NULL, (char *const *)argv, (char *const *)envp);
     if (error) {
         char real[PATH_MAX];
-        if (realpath("/var/jb/bin/sh", real)) {
+        if (realpath(shell, real)) {
             int second = posix_spawn(pid, real, &actions, NULL, (char *const *)argv, (char *const *)envp);
             error = second;
             if (second == EPERM) tgSpawnRefused = YES;
@@ -841,7 +842,7 @@ static NSDictionary<NSString *, TGActionBlock> *TGActionTable(void) {
             // this file exists; its Safe Mode screen offers Dismiss, which removes it.
             @"system.safemode": ^BOOL(BOOL dry) {
                 BOOL ellekit = NO;
-                for (NSString *path in @[@"/var/jb/usr/lib/ellekit/libinjector.dylib", @"/usr/lib/ellekit/libinjector.dylib"])
+                for (NSString *path in @[TGJB(@"/usr/lib/ellekit/libinjector.dylib"), @"/usr/lib/ellekit/libinjector.dylib"])
                     if ([NSFileManager.defaultManager fileExistsAtPath:path]) ellekit = YES;
                 id service = TGShared("FBSystemService");
                 if (!ellekit || ![service respondsToSelector:@selector(exitAndRelaunch:)]) return NO;
