@@ -51,6 +51,10 @@ static const TGItem TGVolume[] = {
     {"volume.downhold", "Down Hold"}, {"volume.updown", "Up, then Down"}, {"volume.downup", "Down, then Up"},
     {"volume.both", "Press Both"}, {"volume.bothhold", "Hold Both"},
 };
+static const TGItem TGSideCombos[] = {
+    {"combo.sideup", "Up Press"}, {"combo.sidedown", "Down Press"},
+    {"combo.sideuphold", "Up Hold"}, {"combo.sidedownhold", "Down Hold"},
+};
 static const TGItem TGMuteSwitch[] = { {"mute.silent", "Switched to Silent"}, {"mute.ring", "Switched to Ring"}, {"mute.toggle", "Toggled"} };
 static const TGItem TGStatusBar[] = {
     {"statusbar.tap", "Tap"}, {"statusbar.doubletap", "Double Tap"}, {"statusbar.hold", "Hold"},
@@ -70,11 +74,28 @@ static const TGItem TGHomeGestures[] = {
 static const TGItem TGIcons[] = {
     {"icon.flickup", "Flick Up"}, {"icon.flickdown", "Flick Down"}, {"icon.flickleft", "Flick Left"}, {"icon.flickright", "Flick Right"},
 };
-// Not offered: slide-in edge gestures and Home Screen pinches (they'd compete
-// with system gestures), status bar swipes (apps draw their own status bar).
+// Activator's slide-ins (GitHub #3), with its two-finger versions, as SpringBoard system gestures.
+static const TGItem TGEdges[] = {
+    {"edge.left", "Slide In from Left"}, {"edge.right", "Slide In from Right"},
+    {"edge.left2", "Two-Finger Slide In from Left"}, {"edge.right2", "Two-Finger Slide In from Right"},
+};
 static const TGItem TGOther[] = {
     {"power.connected", "Charger Connected"}, {"power.disconnected", "Charger Disconnected"},
     {"headphones.in", "Headphones Connected"}, {"headphones.out", "Headphones Disconnected"},
+};
+
+// Phone and FaceTime calls (CallKit's public call observer).
+static const TGItem TGCalls[] = {
+    {"call.incoming", "Incoming Call"}, {"call.answered", "Call Answered"},
+    {"call.outgoing", "Outgoing Call"}, {"call.ended", "Call Ended"},
+};
+
+// Only that a notification arrived (Custom Events has "Notification from <app>").
+static const TGItem TGNotifications[] = { {"notification.any", "Any Notification"} };
+
+// Whatever app plays through iOS's Now Playing (Music, Spotify, Crest…).
+static const TGItem TGMusic[] = {
+    {"music.started", "Playback Started"}, {"music.stopped", "Playback Paused or Stopped"}, {"music.changed", "Song Changed"},
 };
 
 // The proximity sensor (by the earpiece), only kept on while the screen is.
@@ -93,12 +114,17 @@ static const TGGroup TGTriggerGroups[] = {
     {"Touch ID", TGTouchID, TG_COUNT(TGTouchID), "Light Double Tap is touching the sensor twice without clicking. iOS doesn't report single taps or holds while unlocked. Finger Rest and Match only work on the Lock Screen and run alongside unlocking."},
     {"Lock Button", TGLockButton, TG_COUNT(TGLockButton), NULL},
     {"Volume Buttons", TGVolume, TG_COUNT(TGVolume), "Up, then Down (and the reverse) are two quick presses; they always run alongside, and the volume ends where it started."},
+    {"Lock + Volume", TGSideCombos, TG_COUNT(TGSideCombos), "Press the lock button and a volume button together. Up Hold and Down Hold are holding both for half a second; they run alongside iOS, so keep holding and the power-off slider and Emergency SOS appear as usual."},
     {"Mute Switch", TGMuteSwitch, TG_COUNT(TGMuteSwitch), "With Replace on, the switch's position and the ringer can differ until you flip it back."},
     {"Status Bar", TGStatusBar, TG_COUNT(TGStatusBar), "Works on the Home Screen, Lock Screen and inside apps. A single tap still scrolls to the top. Hold is half a second. Left and Right are each half of the status bar: when one is assigned, it runs instead of plain Tap, Double Tap or Hold on that side. Swipe Left and Right are a quick sideways swipe along the bar; swiping down still opens Notification Center or Control Center."},
     {"Home Screen Icons", TGIcons, TG_COUNT(TGIcons), "A quick flick that starts on an app or folder icon on the Home Screen or in the Dock. Widgets, the App Library and jiggle mode are left alone. Flick Left and Flick Right take over page swipes that start on an icon."},
+    {"Screen Edges", TGEdges, TG_COUNT(TGEdges), "Slide in from the very edge of the screen, over apps, on the Home Screen and the Lock Screen. One-finger Slide In from Left takes the place of the swipe back many apps use; the two-finger versions (as in Activator) leave it alone."},
     {"Home Screen Gestures", TGHomeGestures, TG_COUNT(TGHomeGestures), "On the Home Screen pages, not on an icon. Two-finger swipes and pinches leave one-finger scrolling, Spotlight and Today alone; Double Tap only counts on an empty spot. Ignored while editing the Home Screen or with a folder open."},
     {"Motion", TGMotion, TG_COUNT(TGMotion), "Uses iOS's own shake detection (the one behind Shake to Undo), so it costs no battery. Works while the phone is unlocked and awake; Shake to Undo still appears where an app offers it."},
     {"Charger & Headphones", TGOther, TG_COUNT(TGOther), "Taking an AirPod out can count as Headphones Disconnected, because iOS moves the sound to the speaker."},
+    {"Phone Calls", TGCalls, TG_COUNT(TGCalls), "Phone, FaceTime and other calling apps that use CallKit. Incoming Call runs while it rings, Call Answered when a call connects. With Live Voicemail on, a call that goes to voicemail also counts as answered."},
+    {"Notifications", TGNotifications, TG_COUNT(TGNotifications), "Runs when any notification arrives, banner or not. Triggr only sees which app sent it, never what it says. For one app, use Custom Events, Notification from App."},
+    {"Music", TGMusic, TG_COUNT(TGMusic), "Any app that shows in Now Playing: Music, Spotify, YouTube, podcasts, Crest… Song Changed runs once per new song, including the first one after a pause. Changes caused by Triggr's own media actions are ignored for a second, so assignments can't loop."},
     {"Proximity Sensor", TGProximity, TG_COUNT(TGProximity), "The sensor next to the earpiece. With one of these assigned it stays on while the screen is on (a little extra battery). Wave is covering it for under half a second; with Wave assigned, Cover waits that long before it runs."},
     {"State Changes", TGStateChanges, TG_COUNT(TGStateChanges), "Runs after the change. Control Center's Wi-Fi button only disconnects from the network (Left Wi-Fi Network); Wi-Fi stays on. Changes caused by Triggr's own actions are ignored for a second, so assignments can't loop."},
 };
@@ -172,6 +198,9 @@ static const TGGroup TGActionGroups[] = {
 #define TGBrightnessPrefix @"brightness:"     // 0-100
 #define TGMediaVolumePrefix @"volume.media:"  // 0-100
 #define TGRingerVolumePrefix @"volume.ringer:" // 0-100
+// A step from the current brightness, like Activator's Brightness Up / Down.
+#define TGBrightnessUpPrefix @"brightness.up:"     // 1-50
+#define TGBrightnessDownPrefix @"brightness.down:" // 1-50
 #define TGMessagePrefix @"message:"
 #define TGSpeakPrefix @"speak:"
 #define TGSettingsPrefix @"settings:" // App-prefs page id
@@ -239,6 +268,10 @@ static inline NSString *TGTriggerWarning(NSString *trigger, BOOL replaces) {
         @"lock.double": @"Single presses wait a moment to see if another follows.",
         @"lock.triple": @"Single and double presses wait a moment to see if another follows.",
         @"lock.longhold": @"Runs instead of the power-off slider. To show it as well, add Power Off Slider.",
+        @"combo.sideup": @"The lock press won't lock and Volume Up won't change the volume if it's pressed second. Without a Home button it also runs instead of the screenshot; to take it as well, add Take Screenshot. With Up Hold assigned too, it runs when you let go.",
+        @"combo.sidedown": @"The lock press won't lock and Volume Down won't change the volume if it's pressed second. With Down Hold assigned too, it runs when you let go.",
+        @"combo.sideuphold": @"Runs after half a second, alongside iOS: keep holding and the power-off slider and Emergency SOS appear as usual.",
+        @"combo.sidedownhold": @"Runs after half a second, alongside iOS: keep holding and the power-off slider and Emergency SOS appear as usual.",
         @"mute.silent": @"Runs instead of muting, so the ringer stays on. To mute as well, add Mute On (Switches).",
         @"mute.ring": @"Runs instead of unmuting, so the ringer stays off. To unmute as well, add Mute Off (Switches).",
         @"mute.toggle": @"Runs instead of muting or unmuting. To change it as well, add Toggle Mute (Switches).",
@@ -256,6 +289,10 @@ static inline NSString *TGTriggerWarning(NSString *trigger, BOOL replaces) {
         @"lock.double": @"Runs after the presses stop; each press still locks or wakes.",
         @"lock.triple": @"Runs after the presses stop; each press still locks or wakes.",
         @"lock.longhold": @"Runs alongside the power-off slider.",
+        @"combo.sideup": @"Runs alongside the buttons, which still lock and change the volume (and take the screenshot without a Home button).",
+        @"combo.sidedown": @"Runs alongside the buttons, which still lock and change the volume.",
+        @"combo.sideuphold": @"Runs after half a second, alongside iOS: keep holding and the power-off slider and Emergency SOS appear as usual.",
+        @"combo.sidedownhold": @"Runs after half a second, alongside iOS: keep holding and the power-off slider and Emergency SOS appear as usual.",
         @"mute.silent": @"Runs alongside the switch, which still mutes.",
         @"mute.ring": @"Runs alongside the switch, which still unmutes.",
         @"mute.toggle": @"Runs alongside the switch, which still mutes and unmutes.",
@@ -285,7 +322,7 @@ static inline NSString *TGTriggerWarning(NSString *trigger, BOOL replaces) {
 // Display titles for any trigger or mode id.
 // Custom events carry a value after the prefix: "wifi.joined:<network>",
 // "bt.connected:<device>", "battery.above:<percent>", "app.launched:<bundle id>",
-// "time:<HHMM>:<daily|weekdays|weekends>".
+// "time:<HHMM>:<daily|weekdays|weekends|weekday digits>", digits 1 = Sunday ... 7 = Saturday ("time:0730:12" = Sun + Mon).
 
 static inline NSArray<NSString *> *TGCustomPrefixes(void) {
     return @[TGWiFiJoinedPrefix, TGWiFiLeftPrefix, TGBTConnectedPrefix, TGBTDisconnectedPrefix,
@@ -299,9 +336,23 @@ static inline BOOL TGIsCustomTrigger(NSString *trigger) {
     return NO;
 }
 
+// Specific days are stored as weekday digits, e.g. "17" = Sunday + Saturday.
+static inline BOOL TGDaysAreCustom(NSString *days) {
+    return days.length && [days rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"1234567"].invertedSet].location == NSNotFound;
+}
+
 static inline NSString *TGDaysTitle(NSString *days) {
     if ([days isEqualToString:@"weekdays"]) return @"Weekdays";
     if ([days isEqualToString:@"weekends"]) return @"Weekends";
+    if (TGDaysAreCustom(days)) {
+        NSCalendar *calendar = NSCalendar.currentCalendar;
+        NSMutableArray *names = [NSMutableArray array];
+        for (NSInteger i = 0; i < 7; i++) {
+            NSInteger weekday = (calendar.firstWeekday - 1 + i) % 7 + 1;
+            if ([days containsString:@(weekday).stringValue]) [names addObject:calendar.shortWeekdaySymbols[weekday - 1]];
+        }
+        return [names componentsJoinedByString:@", "];
+    }
     return @"Every Day";
 }
 
@@ -347,7 +398,7 @@ static inline NSString *TGTriggerTitle(NSString *trigger) {
         for (int i = 0; i < TGTriggerGroups[g].count; i++)
             if ([trigger isEqualToString:@(TGTriggerGroups[g].items[i].identifier)]) {
                 // Events ("Charger Connected") read fine alone; presses need their button.
-                BOOL event = TGTriggerGroups[g].items == TGOther || TGTriggerGroups[g].items == TGStateChanges || TGTriggerGroups[g].items == TGMotion;
+                BOOL event = TGTriggerGroups[g].items == TGOther || TGTriggerGroups[g].items == TGStateChanges || TGTriggerGroups[g].items == TGMotion || TGTriggerGroups[g].items == TGMusic || TGTriggerGroups[g].items == TGNotifications || TGTriggerGroups[g].items == TGCalls;
                 if (TGTriggerGroups[g].items == TGIcons) return [NSString stringWithFormat:@"Icon %s", TGTriggerGroups[g].items[i].title];
                 if (TGTriggerGroups[g].items == TGHomeGestures) return [NSString stringWithFormat:@"Home Screen %s", TGTriggerGroups[g].items[i].title];
                 return event ? @(TGTriggerGroups[g].items[i].title) : [NSString stringWithFormat:@"%s %s", TGTriggerGroups[g].title, TGTriggerGroups[g].items[i].title];
@@ -455,6 +506,8 @@ static inline NSString *TGActionTitle(NSString *action) {
     if ([action hasPrefix:TGPausePrefix]) return [NSString stringWithFormat:@"Pause %@ s", [action substringFromIndex:TGPausePrefix.length]];
     if ([action hasPrefix:TGMenuPrefix]) return @"Menu";
     if ([action hasPrefix:TGBrightnessPrefix]) return [NSString stringWithFormat:@"Brightness %@%%", [action substringFromIndex:TGBrightnessPrefix.length]];
+    if ([action hasPrefix:TGBrightnessUpPrefix]) return [NSString stringWithFormat:@"Brightness Up %@%%", [action substringFromIndex:TGBrightnessUpPrefix.length]];
+    if ([action hasPrefix:TGBrightnessDownPrefix]) return [NSString stringWithFormat:@"Brightness Down %@%%", [action substringFromIndex:TGBrightnessDownPrefix.length]];
     if ([action hasPrefix:TGMediaVolumePrefix]) return [NSString stringWithFormat:@"Media Volume %@%%", [action substringFromIndex:TGMediaVolumePrefix.length]];
     if ([action hasPrefix:TGRingerVolumePrefix]) return [NSString stringWithFormat:@"Ringer Volume %@%%", [action substringFromIndex:TGRingerVolumePrefix.length]];
     if ([action hasPrefix:TGMessagePrefix]) return [@"Message: " stringByAppendingString:[action substringFromIndex:TGMessagePrefix.length]];

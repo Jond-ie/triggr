@@ -65,6 +65,9 @@ static NSString *TGButtonText(NSString *text) {
     NSString *name = TGLockButtonName();
     text = [text stringByReplacingOccurrencesOfString:@"Lock Button" withString:name];
     text = [text stringByReplacingOccurrencesOfString:@"lock button" withString:name.lowercaseString];
+    NSString *shortName = [name componentsSeparatedByString:@" "].firstObject; // "Side" / "Top"
+    text = [text stringByReplacingOccurrencesOfString:@"Lock + Volume" withString:[shortName stringByAppendingString:@" + Volume"]];
+    text = [text stringByReplacingOccurrencesOfString:@"lock press" withString:[shortName.lowercaseString stringByAppendingString:@" press"]];
     text = [text stringByReplacingOccurrencesOfString:@"showing the power-off slider" withString:@"opening Siri"];
     text = [text stringByReplacingOccurrencesOfString:@"the power-off slider" withString:@"Siri"];
     return [text stringByReplacingOccurrencesOfString:@"the slider" withString:@"Siri"];
@@ -330,6 +333,7 @@ static NSArray<NSString *> *TGPairedBluetoothDevices(void) {
 @implementation TGTimePickerController {
     UIDatePicker *_picker;
     UISegmentedControl *_days;
+    NSArray<UIButton *> *_dayButtons; // tag = weekday, 1 = Sunday
 }
 
 - (void)viewDidLoad {
@@ -340,14 +344,34 @@ static NSArray<NSString *> *TGPairedBluetoothDevices(void) {
     _picker = [UIDatePicker new];
     _picker.datePickerMode = UIDatePickerModeTime;
     _picker.preferredDatePickerStyle = UIDatePickerStyleWheels;
-    _days = [[UISegmentedControl alloc] initWithItems:@[@"Every Day", @"Weekdays", @"Weekends"]];
+    _days = [[UISegmentedControl alloc] initWithItems:@[@"Every Day", @"Weekdays", @"Weekends", @"Custom"]];
     _days.selectedSegmentIndex = 0;
+    [_days addTarget:self action:@selector(presetChanged) forControlEvents:UIControlEventValueChanged];
+    NSCalendar *calendar = NSCalendar.currentCalendar;
+    NSMutableArray *buttons = [NSMutableArray array];
+    for (NSInteger i = 0; i < 7; i++) {
+        NSInteger weekday = (calendar.firstWeekday - 1 + i) % 7 + 1;
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        button.tag = weekday;
+        [button setTitle:calendar.veryShortStandaloneWeekdaySymbols[weekday - 1] forState:UIControlStateNormal];
+        button.titleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightSemibold];
+        button.layer.cornerRadius = 18;
+        button.accessibilityLabel = calendar.standaloneWeekdaySymbols[weekday - 1];
+        [button.heightAnchor constraintEqualToConstant:36].active = YES;
+        [button addTarget:self action:@selector(dayTapped:) forControlEvents:UIControlEventTouchUpInside];
+        [buttons addObject:button];
+    }
+    _dayButtons = buttons;
+    UIStackView *dayRow = [[UIStackView alloc] initWithArrangedSubviews:buttons];
+    dayRow.distribution = UIStackViewDistributionFillEqually;
+    dayRow.spacing = 6;
+    [self presetChanged];
     UILabel *note = [UILabel new];
-    note.text = @"Runs at this time. iOS can delay timers while the phone sleeps; if it's more than 5 minutes late, it's skipped.";
+    note.text = @"Runs at this time on the selected days. iOS can delay timers while the phone sleeps; if it's more than 5 minutes late, it's skipped.";
     note.numberOfLines = 0;
     note.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     note.textColor = UIColor.secondaryLabelColor;
-    UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[_picker, _days, note]];
+    UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[_picker, _days, dayRow, note]];
     stack.axis = UILayoutConstraintAxisVertical;
     stack.spacing = 16;
     stack.translatesAutoresizingMaskIntoConstraints = NO;
@@ -360,9 +384,43 @@ static NSArray<NSString *> *TGPairedBluetoothDevices(void) {
     ]];
 }
 
+- (void)setDay:(UIButton *)button on:(BOOL)on {
+    button.selected = on;
+    button.backgroundColor = on ? self.view.tintColor : UIColor.tertiarySystemFillColor;
+    [button setTitleColor:on ? UIColor.whiteColor : UIColor.labelColor forState:UIControlStateNormal];
+    [button setTitleColor:on ? UIColor.whiteColor : UIColor.labelColor forState:UIControlStateSelected];
+}
+
+- (void)presetChanged {
+    NSInteger preset = _days.selectedSegmentIndex;
+    if (preset == 3) return; // Custom keeps the current picks
+    for (UIButton *button in _dayButtons) {
+        BOOL weekend = button.tag == 1 || button.tag == 7;
+        [self setDay:button on:preset == 0 || (preset == 1 && !weekend) || (preset == 2 && weekend)];
+    }
+    self.navigationItem.rightBarButtonItem.enabled = YES;
+}
+
+// Weekday digits of the picked days, Sunday first: "12" = Sunday + Monday.
+- (NSString *)pickedDays {
+    NSMutableString *digits = [NSMutableString string];
+    for (NSInteger weekday = 1; weekday <= 7; weekday++)
+        for (UIButton *button in _dayButtons) if (button.tag == weekday && button.selected) [digits appendFormat:@"%ld", (long)weekday];
+    return digits;
+}
+
+- (void)dayTapped:(UIButton *)button {
+    [self setDay:button on:!button.selected];
+    NSString *days = [self pickedDays];
+    _days.selectedSegmentIndex = [days isEqualToString:@"1234567"] ? 0 : [days isEqualToString:@"23456"] ? 1 : [days isEqualToString:@"17"] ? 2 : 3;
+    self.navigationItem.rightBarButtonItem.enabled = days.length > 0;
+}
+
 - (void)save {
     NSDateComponents *time = [NSCalendar.currentCalendar components:NSCalendarUnitHour | NSCalendarUnitMinute fromDate:_picker.date];
-    NSString *days = @[@"daily", @"weekdays", @"weekends"][_days.selectedSegmentIndex];
+    NSString *days = [self pickedDays];
+    if (!days.length) return;
+    if (_days.selectedSegmentIndex < 3) days = @[@"daily", @"weekdays", @"weekends"][_days.selectedSegmentIndex];
     if (self.onSave) self.onSave([NSString stringWithFormat:@"%@%02ld%02ld:%@", TGTimePrefix, (long)time.hour, (long)time.minute, days]);
 }
 
@@ -577,7 +635,7 @@ static NSString *TGCategoryOf(NSString *action) {
     if ([action hasPrefix:TGMenuPrefix]) return @"menus";
     NSArray *extension = TGExtensionAction(action);
     if (extension) return [TGExtensionPrefix stringByAppendingString:extension[0]];
-    for (NSString *prefix in @[TGBrightnessPrefix, TGMediaVolumePrefix, TGRingerVolumePrefix]) if ([action hasPrefix:prefix]) return @"levels";
+    for (NSString *prefix in @[TGBrightnessPrefix, TGBrightnessUpPrefix, TGBrightnessDownPrefix, TGMediaVolumePrefix, TGRingerVolumePrefix]) if ([action hasPrefix:prefix]) return @"levels";
     for (NSString *prefix in @[TGAppPrefix, TGSettingsPrefix, TGShortcutPrefix, TGURLPrefix]) if ([action hasPrefix:prefix]) return @"open";
     for (NSString *prefix in @[TGMessagePrefix, TGSpeakPrefix, TGShellPrefix]) if ([action hasPrefix:prefix]) return @"text";
     for (NSString *prefix in @[@"toggle.", @"on.", @"off."]) if ([action hasPrefix:prefix]) return @"switches";
@@ -763,6 +821,8 @@ static NSString *TGCategoryOf(NSString *action) {
         }
     } else if ([category isEqualToString:@"levels"]) {
         [rows addObject:[self rowForCommand:TGBrightnessPrefix title:@"Set Brightness…" prompt:@"Brightness, 0–100 %"]];
+        [rows addObject:[self rowForCommand:TGBrightnessUpPrefix title:@"Brightness Up…" prompt:@"Raise brightness by this much each time, 1–50 % (10 is a good step)"]];
+        [rows addObject:[self rowForCommand:TGBrightnessDownPrefix title:@"Brightness Down…" prompt:@"Lower brightness by this much each time, 1–50 % (10 is a good step)"]];
         [rows addObject:[self rowForCommand:TGMediaVolumePrefix title:@"Set Media Volume…" prompt:@"Media volume, 0–100 %"]];
         [rows addObject:[self rowForCommand:TGRingerVolumePrefix title:@"Set Ringer Volume…" prompt:@"Ringer volume, 0–100 %"]];
     } else if ([category isEqualToString:@"open"]) {
@@ -1206,9 +1266,10 @@ static NSString *TGCategoryOf(NSString *action) {
 
 // A text (or number) for a command action, in an alert.
 - (void)promptForCommand:(PSSpecifier *)spec prefix:(NSString *)prefix existing:(NSString *)existingItem {
-    BOOL percent = [prefix isEqualToString:TGBrightnessPrefix] || [prefix isEqualToString:TGMediaVolumePrefix] || [prefix isEqualToString:TGRingerVolumePrefix];
+    BOOL step = [prefix isEqualToString:TGBrightnessUpPrefix] || [prefix isEqualToString:TGBrightnessDownPrefix];
+    BOOL percent = step || [prefix isEqualToString:TGBrightnessPrefix] || [prefix isEqualToString:TGMediaVolumePrefix] || [prefix isEqualToString:TGRingerVolumePrefix];
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:[spec.name stringByReplacingOccurrencesOfString:@"…" withString:@""] message:[spec propertyForKey:@"tgPrompt"] preferredStyle:UIAlertControllerStyleAlert];
-    NSString *existing = existingItem ? [existingItem substringFromIndex:prefix.length] : @"";
+    NSString *existing = existingItem ? [existingItem substringFromIndex:prefix.length] : step ? @"10" : @"";
     [alert addTextFieldWithConfigurationHandler:^(UITextField *field) {
         field.text = existing;
         if (percent) field.keyboardType = UIKeyboardTypeNumberPad;
@@ -1220,7 +1281,8 @@ static NSString *TGCategoryOf(NSString *action) {
     __weak UIAlertController *weakAlert = alert;
     [alert addAction:[UIAlertAction actionWithTitle:@"Save" style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
         NSString *text = [weakAlert.textFields.firstObject.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
-        if (percent && text.length) text = [NSString stringWithFormat:@"%d", (int)MIN(MAX(text.intValue, 0), 100)];
+        if (step && text.length) text = [NSString stringWithFormat:@"%d", (int)MIN(MAX(text.intValue, 1), 50)];
+        else if (percent && text.length) text = [NSString stringWithFormat:@"%d", (int)MIN(MAX(text.intValue, 0), 100)];
         if (text.length) [self setItem:[prefix stringByAppendingString:text] forPrefix:prefix];
     }]];
     if (existingItem) {
@@ -1284,7 +1346,7 @@ static NSComparator const TGCatalogOrder = ^NSComparisonResult(PSSpecifier *a, P
             PSSpecifier *group = [PSSpecifier groupSpecifierWithName:nil];
             NSString *footer = triggers->footer ? @(triggers->footer) : nil;
             // Buttons follow Replace Button Actions; say which way it's set.
-            if (triggers->items == TGHomeButton || triggers->items == TGLockButton || triggers->items == TGVolume || triggers->items == TGTouchID || triggers->items == TGMuteSwitch) {
+            if (triggers->items == TGHomeButton || triggers->items == TGLockButton || triggers->items == TGVolume || triggers->items == TGTouchID || triggers->items == TGMuteSwitch || triggers->items == TGSideCombos) {
                 NSString *mode = [self replacesButtons]
                     ? @"Replace Button Actions is on (Options): an assigned press runs instead of the button's own action. Unassigned presses work as usual."
                     : @"Replace Button Actions is off (Options): assigned presses run alongside the button's own action.";
@@ -1602,10 +1664,10 @@ static NSComparator const TGCatalogOrder = ^NSComparisonResult(PSSpecifier *a, P
         [specs addObject:group];
         NSDictionary<NSString *, NSArray *> *icons = @{
             @"Home Button": @[@"circle.circle", UIColor.systemGrayColor], @"Touch ID": @[@"touchid", UIColor.systemRedColor],
-            @"Lock Button": @[@"lock.fill", UIColor.systemBlueColor], @"Volume Buttons": @[@"speaker.wave.2.fill", UIColor.systemPinkColor],
+            @"Lock Button": @[@"lock.fill", UIColor.systemBlueColor], @"Volume Buttons": @[@"speaker.wave.2.fill", UIColor.systemPinkColor], @"Lock + Volume": @[@"plus.rectangle.on.rectangle", UIColor.systemPurpleColor],
             @"Mute Switch": @[@"bell.slash.fill", UIColor.systemOrangeColor], @"Status Bar": @[@"rectangle.topthird.inset.filled", UIColor.systemIndigoColor],
             @"Home Screen Icons": @[@"square.grid.3x3.fill", UIColor.systemBlueColor], @"Home Screen Gestures": @[@"hand.draw.fill", UIColor.systemMintColor], @"Motion": @[@"iphone.radiowaves.left.and.right", UIColor.systemYellowColor],
-            @"Charger & Headphones": @[@"bolt.fill", UIColor.systemGreenColor], @"Proximity Sensor": @[@"hand.raised.fill", UIColor.systemBrownColor], @"State Changes": @[@"arrow.triangle.2.circlepath", UIColor.systemTealColor],
+            @"Charger & Headphones": @[@"bolt.fill", UIColor.systemGreenColor], @"Music": @[@"music.note", UIColor.systemPinkColor], @"Notifications": @[@"bell.badge.fill", UIColor.systemRedColor], @"Phone Calls": @[@"phone.fill", UIColor.systemGreenColor], @"Screen Edges": @[@"arrow.left.and.right.square.fill", UIColor.systemCyanColor], @"Proximity Sensor": @[@"hand.raised.fill", UIColor.systemBrownColor], @"State Changes": @[@"arrow.triangle.2.circlepath", UIColor.systemTealColor],
         };
         for (int g = 0; g < TG_COUNT(TGTriggerGroups); g++) {
             if (!TGShowsTriggerGroup(&TGTriggerGroups[g])) continue;
@@ -1613,7 +1675,7 @@ static NSComparator const TGCatalogOrder = ^NSComparisonResult(PSSpecifier *a, P
             const TGItem *items = TGTriggerGroups[g].items;
             if (oneApp && (items == TGIcons || items == TGHomeGestures || items == TGOther || items == TGStateChanges)) continue;
             NSString *title = @(TGTriggerGroups[g].title);
-            PSSpecifier *row = [self rowForGroup:g title:TGTriggerGroups[g].items == TGLockButton ? TGLockButtonName() : title];
+            PSSpecifier *row = [self rowForGroup:g title:TGTriggerGroups[g].items == TGLockButton ? TGLockButtonName() : TGButtonText(title)];
             if (icons[title]) TGSetIcon(row, icons[title][0], icons[title][1]);
             [specs addObject:row];
         }
