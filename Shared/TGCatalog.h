@@ -134,6 +134,22 @@ static const TGItem TGMediaActions[] = {
     {"media.volup", "Volume Up"}, {"media.voldown", "Volume Down"},
     {"media.airplay", "AirPlay Picker"}, {"media.airplayiphone", "Play on iPhone"},
 };
+// Snapper 3 (jontelang): "snapper3.<x>" posts Snapper's own (distributed)
+// notification "com.jontelang.snapper3.<x>". Only offered while Snapper 3 is installed.
+#define TGSnapperPrefix @"snapper3."
+static const TGItem TGSnapperActions[] = {
+    {"snapper3.force.open", "New Snap"}, {"snapper3.forceinstant.open", "Instant Snap"},
+    {"snapper3.forcefreeze.open", "Freeze Screen & Snap"}, {"snapper3.openlast", "Reopen Last Snap"},
+    {"snapper3.history", "Snap History"}, {"snapper3.closecrop", "Cancel Cropping"}, {"snapper3.close.all", "Close All Snaps"},
+};
+
+// CopyLog (TomT000): "copylog.<x>" posts the Darwin notification
+// "me.tomt000.copylog.<x>" that CopyLog's SpringBoard part listens for.
+// Only offered while CopyLog is installed.
+#define TGCopyLogPrefix @"copylog."
+static const TGItem TGCopyLogActions[] = {
+    {"copylog.showView", "Show CopyLog"}, {"copylog.showFavoritesView", "Show CopyLog Favorites"},
+};
 
 static const TGGroup TGActionGroups[] = {
     {"System", TGSystemActions, TG_COUNT(TGSystemActions), NULL},
@@ -142,6 +158,8 @@ static const TGGroup TGActionGroups[] = {
     {"Turn On", TGOnActions, TG_COUNT(TGOnActions), NULL},
     {"Turn Off", TGOffActions, TG_COUNT(TGOffActions), NULL},
     {"Media", TGMediaActions, TG_COUNT(TGMediaActions), NULL},
+    {"Snapper 3", TGSnapperActions, TG_COUNT(TGSnapperActions), NULL},
+    {"CopyLog", TGCopyLogActions, TG_COUNT(TGCopyLogActions), NULL},
 };
 
 // Command actions carry their argument in the id: "<prefix><text>".
@@ -423,6 +441,17 @@ static inline NSArray<NSString *> *TGExtensionItems(NSDictionary *extension) {
     }
     return [items sortedArrayUsingSelector:@selector(localizedStandardCompare:)];
 }
+
+// Another tweak is installed when a <prefix>*.dylib is in the tweak folder
+// (file names vary between versions, so any with that prefix, any case).
+static inline BOOL TGTweakInstalled(NSString *prefix) {
+    for (NSString *directory in @[@"/var/jb/Library/MobileSubstrate/DynamicLibraries", @"/Library/MobileSubstrate/DynamicLibraries"])
+        for (NSString *file in [NSFileManager.defaultManager contentsOfDirectoryAtPath:directory error:nil])
+            if ([file.lowercaseString hasPrefix:prefix] && [file.pathExtension isEqualToString:@"dylib"]) return YES;
+    return NO;
+}
+static inline BOOL TGSnapperInstalled(void) { return TGTweakInstalled(@"snapper"); }
+static inline BOOL TGCopyLogInstalled(void) { return TGTweakInstalled(@"copylog"); }
 
 // "ext:eqe:Bass Boost" -> @[@"eqe", @"Bass Boost"]
 static inline NSArray<NSString *> *TGExtensionAction(NSString *action) {

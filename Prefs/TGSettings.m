@@ -539,6 +539,8 @@ static NSString *TGListWarning(NSArray<NSString *> *list, NSString *adding) {
 static NSArray<NSArray<NSString *> *> *TGCategories(void) {
     NSMutableArray *categories = [@[@[@"system", @"System"], @[@"power", @"Power"], @[@"switches", @"Switches"], @[@"media", @"Media"], @[@"levels", @"Levels"],
         @[@"open", @"Open"], @[@"text", @"Text & Commands"], @[@"menus", @"Menus"]] mutableCopy];
+    if (TGSnapperInstalled()) [categories addObject:@[@"snapper3", @"Snapper 3"]];
+    if (TGCopyLogInstalled()) [categories addObject:@[@"copylog", @"CopyLog"]];
     // Installed action extensions, each its own category ("ext:<name>").
     for (NSString *name in TGExtensionNames()) {
         NSDictionary *extension = TGExtension(name);
@@ -564,6 +566,8 @@ static void TGSetCategoryIcon(PSSpecifier *spec, NSString *category) {
         @"open": @[@"arrow.up.right.square.fill", UIColor.systemIndigoColor],
         @"text": @[@"text.bubble.fill", UIColor.systemTealColor],
         @"menus": @[@"list.bullet.rectangle.fill", UIColor.systemPurpleColor],
+        @"snapper3": @[@"camera.viewfinder", UIColor.systemYellowColor],
+        @"copylog": @[@"doc.on.clipboard.fill", UIColor.systemCyanColor],
     };
     if (icons[category]) TGSetIcon(spec, icons[category][0], icons[category][1]);
     else if ([category hasPrefix:TGExtensionPrefix]) {
@@ -752,6 +756,8 @@ static NSString *TGCategoryOf(NSString *action) {
     if ([category isEqualToString:@"system"]) { items = TGSystemActions; count = TG_COUNT(TGSystemActions); }
     else if ([category isEqualToString:@"power"]) { items = TGPowerActions; count = TG_COUNT(TGPowerActions); }
     else if ([category isEqualToString:@"media"]) { items = TGMediaActions; count = TG_COUNT(TGMediaActions); }
+    else if ([category isEqualToString:@"snapper3"] && TGSnapperInstalled()) { items = TGSnapperActions; count = TG_COUNT(TGSnapperActions); }
+    else if ([category isEqualToString:@"copylog"] && TGCopyLogInstalled()) { items = TGCopyLogActions; count = TG_COUNT(TGCopyLogActions); }
     for (int i = 0; i < count; i++) [rows addObject:[self rowForAction:@(items[i].identifier) title:@(items[i].title)]];
     if ([category isEqualToString:@"media"])
         [rows addObject:[self rowForCommand:TGAirPlayPrefix title:@"AirPlay To…" prompt:@"Speaker or TV name, as it appears in the AirPlay menu (part of it is enough)"]];
@@ -791,9 +797,13 @@ static NSString *TGCategoryOf(NSString *action) {
 // Search: every action as one flat list, with each switch's Toggle / On / Off as its own row.
 - (NSMutableArray *)searchSpecifiers {
     NSMutableArray *rows = [NSMutableArray array];
-    for (int g = 0; g < TG_COUNT(TGActionGroups); g++)
+    BOOL snapper = TGSnapperInstalled(), copyLog = TGCopyLogInstalled();
+    for (int g = 0; g < TG_COUNT(TGActionGroups); g++) {
+        if (TGActionGroups[g].items == TGSnapperActions && !snapper) continue;
+        if (TGActionGroups[g].items == TGCopyLogActions && !copyLog) continue;
         for (int i = 0; i < TGActionGroups[g].count; i++)
             [rows addObject:[self rowForAction:@(TGActionGroups[g].items[i].identifier) title:@(TGActionGroups[g].items[i].title)]];
+    }
     for (NSString *category in @[@"levels", @"open", @"text", @"menus"]) [rows addObjectsFromArray:[self rowsForCategory:category]];
     for (NSArray<NSString *> *category in TGCategories())
         if ([category[0] hasPrefix:TGExtensionPrefix]) [rows addObjectsFromArray:[self rowsForCategory:category[0]]];

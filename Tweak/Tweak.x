@@ -945,6 +945,34 @@ static BOOL TGOpenApp(NSString *identifier, BOOL dryRun) {
     return YES;
 }
 
+// Snapper 3 listens on the distributed notification center (its own Control
+// Center modules post there, not Darwin notifications as its README says).
+// Triggr only posts the ones in its catalogue, and only while Snapper 3 is installed.
+static BOOL TGSnapper(NSString *action, BOOL dryRun) {
+    BOOL known = NO;
+    for (int i = 0; i < TG_COUNT(TGSnapperActions); i++)
+        if ([action isEqualToString:@(TGSnapperActions[i].identifier)]) known = YES;
+    // Marked unavailable on iOS in the SDK, but present at runtime.
+    static CFNotificationCenterRef (*distributedCenter)(void);
+    if (!distributedCenter) distributedCenter = (CFNotificationCenterRef (*)(void))dlsym(RTLD_DEFAULT, "CFNotificationCenterGetDistributedCenter");
+    if (!known || !distributedCenter || !TGSnapperInstalled()) return NO;
+    if (!dryRun) {
+        NSString *name = [@"com.jontelang.snapper3." stringByAppendingString:[action substringFromIndex:TGSnapperPrefix.length]];
+        CFNotificationCenterPostNotification(distributedCenter(), (__bridge CFStringRef)name, NULL, NULL, true);
+    }
+    return YES;
+}
+
+// CopyLog listens for Darwin notifications; only the ones in Triggr's catalogue.
+static BOOL TGCopyLog(NSString *action, BOOL dryRun) {
+    BOOL known = NO;
+    for (int i = 0; i < TG_COUNT(TGCopyLogActions); i++)
+        if ([action isEqualToString:@(TGCopyLogActions[i].identifier)]) known = YES;
+    if (!known || !TGCopyLogInstalled()) return NO;
+    if (!dryRun) notify_post([@"me.tomt000.copylog." stringByAppendingString:[action substringFromIndex:TGCopyLogPrefix.length]].UTF8String);
+    return YES;
+}
+
 static BOOL TGCanPerform(NSString *action) {
     if (action.length == 0) return NO;
     if ([action hasPrefix:TGPausePrefix]) return YES;
@@ -956,6 +984,8 @@ static BOOL TGCanPerform(NSString *action) {
         NSString *program = TGExtension(TGExtensionAction(action)[0])[@"Program"];
         return program && [NSFileManager.defaultManager isReadableFileAtPath:program];
     }
+    if ([action hasPrefix:TGSnapperPrefix]) return TGSnapper(action, YES);
+    if ([action hasPrefix:TGCopyLogPrefix]) return TGCopyLog(action, YES);
     TGActionBlock block = TGActionTable()[action] ?: TGSwitchAction(action);
     return block && block(YES);
 }
@@ -978,6 +1008,10 @@ static void TGPerform(NSString *action) {
             TGOpenApp([action substringFromIndex:TGAppPrefix.length], NO);
         } else if ([action hasPrefix:TGMenuPrefix]) {
             TGShowMenu([action substringFromIndex:TGMenuPrefix.length]);
+        } else if ([action hasPrefix:TGSnapperPrefix]) {
+            TGSnapper(action, NO);
+        } else if ([action hasPrefix:TGCopyLogPrefix]) {
+            TGCopyLog(action, NO);
         } else {
             TGValueAction(action, NO);
         }
