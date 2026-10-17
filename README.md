@@ -2,14 +2,22 @@
 
 <p align="center">
   <b>Activator-style triggers for modern jailbreaks.</b><br>
-  Rootless Dopamine · iOS 15–18 · arm64 & arm64e · Touch ID and Face ID
+  Rootless Dopamine · iOS 15–18 · Touch ID and Face ID
 </p>
 
 <p align="center">
   <a href="https://jond-ie.github.io/repo/"><img src="https://img.shields.io/badge/Install-John's%20Repo-blue" alt="Install from John's Repo"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="GPL-3.0"></a>
-  <img src="https://img.shields.io/badge/version-1.5.0-informational" alt="Version 1.5.0">
+  <img src="https://img.shields.io/badge/source-1.5.0-informational" alt="Source 1.5.0">
+  <a href="https://github.com/Jond-ie/triggr-beta/releases"><img src="https://img.shields.io/badge/beta-2.0.0%20beta%201-orange" alt="2.0 Beta 1"></a>
 </p>
+
+> **Triggr 2.0 is out in beta, and from 2.0 on Triggr is closed source.** This repo keeps the 1.x source (GPLv3)
+> and stays the place for **bug reports and requests** ([issues](../../issues)). Get 2.0 Beta 1 from the
+> [Sileo repo](https://jond-ie.github.io/repo/) or [triggr-beta releases](https://github.com/Jond-ie/triggr-beta/releases).
+> New in 2.0: Only If conditions, If / Otherwise steps, multi-finger gestures inside apps, bottom swipe zones,
+> the Action button (experimental), accessibility switches, speech and clipboard actions, and an API for other
+> tweaks to add their own triggers and actions.
 
 Press, tap, flick, pinch, shake or wave, and Triggr runs what you picked: go
 Home, toggle the flashlight, open an app, run a Shortcut or a whole sequence of
