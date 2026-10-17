@@ -16,8 +16,22 @@
 > and stays the place for **bug reports and requests** ([issues](../../issues)). Get 2.0 Beta 1 from the
 > [Sileo repo](https://jond-ie.github.io/repo/) or [triggr-beta releases](https://github.com/Jond-ie/triggr-beta/releases).
 > New in 2.0: Only If conditions, If / Otherwise steps, multi-finger gestures inside apps, bottom swipe zones,
-> the Action button (experimental), accessibility switches, speech and clipboard actions, and an API for other
-> tweaks to add their own triggers and actions.
+> the Action button (experimental), accessibility switches, speech and clipboard actions, and
+> **[libtriggr](https://github.com/Jond-ie/libtriggr)**, an open (MIT) API for other tweaks to add their own triggers,
+> actions and a "Configure via Triggr" button. First tweak using it: **BegoneCIA 1.1.0**.
+>
+> The documentation below describes 1.5; 2.0 adds to it.
+
+### New in 2.0 Beta 1
+
+<p>
+  <img src="screenshots/12-ifelse.png" alt="If / Otherwise steps in a sequence" width="200">
+  <img src="screenshots/13-steps.png" alt="Steps editor with If, Otherwise and End If" width="200">
+  <img src="screenshots/14-onlyif.png" alt="Only If conditions" width="200">
+  <img src="screenshots/15-actionbutton.png" alt="Action Button: Press, Double Press, Hold" width="200">
+  <img src="screenshots/16-libtriggr.png" alt="Action categories, including BegoneCIA through libtriggr" width="200">
+</p>
+
 
 Press, tap, flick, pinch, shake or wave, and Triggr runs what you picked: go
 Home, toggle the flashlight, open an app, run a Shortcut or a whole sequence of
@@ -59,8 +73,9 @@ Screen, or inside one specific app.
 - **Respectful of iOS.** Unassigned buttons do exactly what they always did,
   waking the phone always works, and Emergency SOS is never touched.
 - **Extensible.** Other packages can add their own actions with a single plist
-  ([EXTENSIONS.md](EXTENSIONS.md)), like EQELinker's EQE presets.
-- **Open source** under GPL-3.0.
+  ([EXTENSIONS.md](EXTENSIONS.md)), like EQELinker's EQE presets. From 2.0, tweaks can also add triggers,
+  actions and a settings button with [libtriggr](https://github.com/Jond-ie/libtriggr).
+- **Source:** 1.x is open source under GPL-3.0 (this repo). 2.0 and later are closed source.
 
 ## Install
 
@@ -257,8 +272,7 @@ it.
 - Control Center's Wi-Fi button only disconnects from the network; Wi-Fi stays on.
 - **Last App** only knows the apps opened since the last respring.
 - Turning **Dark Mode** on or off ends an automatic appearance schedule.
-- Not offered: slide-in screen edge gestures (they compete with the system's own),
-  call events, headset button, VPN and Personal Hotspot.
+- Not offered: headset button, VPN and Personal Hotspot.
 
 ## Bugs and feature requests
 
@@ -296,7 +310,8 @@ newer).
 
 ## License and credits
 
-Triggr is free software under the [GNU General Public License v3.0](LICENSE).
+The 1.x source in this repo is free software under the [GNU General Public License v3.0](LICENSE). Triggr 2.0
+and later are closed source; [libtriggr](https://github.com/Jond-ie/libtriggr) is MIT.
 
 - **Triggr** by **John d_ie** ([John's Repo](https://jond-ie.github.io/repo/)).
 - Inspired by **Activator** by Ryan Petrich.
