@@ -9,11 +9,11 @@
   <a href="https://jond-ie.github.io/repo/"><img src="https://img.shields.io/badge/Install-John's%20Repo-blue" alt="Install from John's Repo"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="GPL-3.0"></a>
   <img src="https://img.shields.io/badge/source-1.5.0-informational" alt="Source 1.5.0">
-  <a href="https://github.com/Jond-ie/triggr-beta/releases"><img src="https://img.shields.io/badge/beta-2.0.0%20beta%201-orange" alt="2.0 Beta 1"></a>
+  <a href="https://github.com/Jond-ie/triggr-beta/releases"><img src="https://img.shields.io/badge/beta-2.0.0%20beta%202-orange" alt="2.0 Beta 2"></a>
 </p>
 
 > **Triggr 2.0 is out in beta, and from 2.0 on Triggr is closed source.** This repo keeps the 1.x source (GPLv3)
-> and stays the place for **bug reports and requests** ([issues](../../issues)). Get 2.0 Beta 1 from the
+> and stays the place for **bug reports and requests** ([issues](../../issues)). Get 2.0 Beta 2 from the
 > [Sileo repo](https://jond-ie.github.io/repo/) or [triggr-beta releases](https://github.com/Jond-ie/triggr-beta/releases).
 > New in 2.0: Only If conditions, If / Otherwise steps, multi-finger gestures inside apps, bottom swipe zones,
 > the Action button (experimental), accessibility switches, speech and clipboard actions, and
@@ -22,7 +22,10 @@
 >
 > The documentation below describes 1.5; 2.0 adds to it.
 
-### New in 2.0 Beta 1
+### New in 2.0 Beta 1 and 2
+
+Beta 2 adds **Snapper 3** and **CopyLog** actions (shown only while those tweaks are installed), contributed by
+[@qnblackcat](https://github.com/qnblackcat) in #4.
 
 <p>
   <img src="screenshots/12-ifelse.png" alt="If / Otherwise steps in a sequence" width="200">
