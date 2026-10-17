@@ -13,7 +13,8 @@
 </p>
 
 > **Triggr 2.0 is out in beta, and from 2.0 on Triggr is closed source.** This repo keeps the 1.x source (GPLv3)
-> and stays the place for **bug reports and requests** ([issues](../../issues)). Get 2.0 Beta 2 from the
+> and stays the place for **bug reports and requests** ([issues](../../issues)). RootHide: [2.0 Beta 2 RootHide](https://github.com/Jond-ie/triggr-beta/releases/tag/v2.0.0-beta2-roothide)
+> (untested, feedback welcome). Get 2.0 Beta 2 from the
 > [Sileo repo](https://jond-ie.github.io/repo/) or [triggr-beta releases](https://github.com/Jond-ie/triggr-beta/releases).
 > New in 2.0: Only If conditions, If / Otherwise steps, multi-finger gestures inside apps, bottom swipe zones,
 > the Action button (experimental), accessibility switches, speech and clipboard actions, and
