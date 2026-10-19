@@ -1,128 +1,106 @@
+<p align="center"><img src="https://jond-ie.github.io/repo/assets/triggr.png" width="96" alt=""></p>
+
 <h1 align="center">Triggr</h1>
 
 <p align="center">
-  <b>Activator-style triggers for modern jailbreaks.</b><br>
-  Rootless Dopamine · iOS 15–18 · Touch ID and Face ID
+  <b>Make any button, gesture or event do anything you want.</b><br>
+  Like Activator, rebuilt for iOS 15–18 · Rootless (Dopamine) · Touch ID and Face ID
 </p>
 
 <p align="center">
-  <a href="https://jond-ie.github.io/repo/"><img src="https://img.shields.io/badge/Install-John's%20Repo-blue" alt="Install from John's Repo"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="GPL-3.0"></a>
-  <img src="https://img.shields.io/badge/source-1.5.0-informational" alt="Source 1.5.0">
-  <a href="https://github.com/Jond-ie/triggr-beta/releases"><img src="https://img.shields.io/badge/beta-2.0.0%20beta%203-orange" alt="2.0 Beta 3"></a>
+  <a href="https://jond-ie.github.io/repo/triggr/"><img src="https://img.shields.io/badge/Website-Triggr-blue" alt="Website"></a>
+  <a href="https://jond-ie.github.io/repo/"><img src="https://img.shields.io/badge/Install-Jond--ie's%20repo-blue" alt="Install from Jond-ie's repo"></a>
+  <a href="https://github.com/Jond-ie/triggr-beta/releases"><img src="https://img.shields.io/badge/latest-2.0.0%20beta%203-orange" alt="2.0 Beta 3"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/1.x%20source-GPLv3-lightgrey.svg" alt="GPL-3.0"></a>
 </p>
 
-> **Triggr 2.0 is out in beta, and from 2.0 on Triggr is closed source.** This repo keeps the 1.x source (GPLv3)
-> and stays the place for **bug reports and requests** ([issues](../../issues)). RootHide: every release has a RootHide build on
-> [triggr-beta](https://github.com/Jond-ie/triggr-beta/releases/tag/v2.0.0-beta3) (untested, feedback welcome). Get 2.0 Beta 3 from the
-> [Sileo repo](https://jond-ie.github.io/repo/) or [triggr-beta releases](https://github.com/Jond-ie/triggr-beta/releases).
-> New in 2.0: Only If conditions, If / Otherwise steps, multi-finger gestures inside apps, bottom swipe zones,
-> the Action button (experimental), accessibility switches, speech and clipboard actions, and
-> **[libtriggr](https://github.com/Jond-ie/libtriggr)**, an open (MIT) API for other tweaks to add their own triggers,
-> actions and a "Configure via Triggr" button. First tweak using it: **BegoneCIA 1.1.0**.
->
-> The documentation below describes 1.5; 2.0 adds to it.
-
-### New in 2.0 Betas 1–3
-
-Beta 3 fixes scheduled times (they could skip days while the phone slept) and stops multi-finger gestures firing
-while typing fast.
-
-Beta 2 adds **Snapper 3** and **CopyLog** actions (shown only while those tweaks are installed), contributed by
-[@qnblackcat](https://github.com/qnblackcat) in #4.
-
-<p>
-  <img src="screenshots/12-ifelse.png" alt="If / Otherwise steps in a sequence" width="200">
-  <img src="screenshots/13-steps.png" alt="Steps editor with If, Otherwise and End If" width="200">
-  <img src="screenshots/14-onlyif.png" alt="Only If conditions" width="200">
-  <img src="screenshots/15-actionbutton.png" alt="Action Button: Press, Double Press, Hold" width="200">
-  <img src="screenshots/16-libtriggr.png" alt="Action categories, including BegoneCIA through libtriggr" width="200">
+<p align="center">
+  <img src="screenshots/9-triggers.png" width="200" alt="The list of triggers">
+  <img src="screenshots/5-picker.png" width="200" alt="The action picker">
+  <img src="screenshots/12-ifelse.png" width="200" alt="If / Otherwise steps">
 </p>
 
+> **This repo** holds the open 1.x source (GPLv3) and is the place for [bug reports and requests](../../issues).
+> Triggr 2.0 and later are closed source; get them from [the repo](https://jond-ie.github.io/repo/) or
+> [triggr-beta](https://github.com/Jond-ie/triggr-beta/releases) (RootHide builds there too, untested).
+> Tweak developers: [libtriggr](https://github.com/Jond-ie/libtriggr) (MIT).
 
-Press, tap, flick, pinch, shake or wave, and Triggr runs what you picked: go
-Home, toggle the flashlight, open an app, run a Shortcut or a whole sequence of
-actions. Assign it once in **Settings → Triggr** or the **Triggr app**, and it
-works where you want it: everywhere, on the Home Screen, in apps, on the Lock
-Screen, or inside one specific app.
+## How it works
 
-<p>
-  <img src="screenshots/1-main.png" alt="Main page with trigger search" width="200">
-  <img src="screenshots/2-place.png" alt="A place: Assigned, then every kind of trigger" width="200">
-  <img src="screenshots/3-assigned.png" alt="Assigned: tap to change, swipe to remove, Remove All" width="200">
-  <img src="screenshots/4-statusbar.png" alt="Status Bar triggers, with left / right halves and swipes" width="200">
-  <img src="screenshots/5-picker.png" alt="Action picker: Selected, Recently Used, categories, Test" width="200">
-  <img src="screenshots/6-apps.png" alt="In Specific Apps" width="200">
-  <img src="screenshots/7-app.png" alt="One app's own triggers" width="200">
-  <img src="screenshots/8-options.png" alt="Options" width="200">
-</p>
+1. **Pick a trigger:** a button press, a swipe, a gesture, or something that happens, like your AirPods connecting.
+2. **Pick what it does:** open an app, flip a switch, run a Shortcut, or a whole list of steps. **Test** runs it right away.
+3. **Pick where:** everywhere, the Home Screen, in apps, the Lock Screen, or just inside one app.
 
-## Why Triggr
+All in **Settings → Triggr** or the **Triggr app**. Nothing changes until you assign something.
 
-- **Lightweight.** The main library loads into SpringBoard only. Apps get a tiny
-  relay that links nothing but UIKit and stays silent unless a status bar or
-  shake trigger is assigned. There's no web server and no polling; the small
-  helper that runs commands on iOS 18 sleeps until one is needed.
-- **Efficient by design.** Every hook checks the set of assigned triggers first
-  and returns at once if its trigger isn't used. Event observers, timers, gesture
-  recognizers, the proximity sensor and the API only exist while something is
-  assigned to them. Settings changes arrive by notification; nothing is polled.
-- **Private and safe.** Nothing listens on the network. The optional API is local,
-  off by default, and can only run your own assignments, menus and built-in
-  actions. Commands only ever run what's in your own setup. Notification triggers
-  see which app posted, never what it says.
-- **Made for today's iOS.** Tested on iOS 15, 16, 17 and 18, on A10 to A13, Touch
-  ID and Face ID. On Face ID iPhones the side button is fully supported, including
-  replacing Wallet and the Accessibility Shortcut, and commands keep working on
-  iOS 18, where SpringBoard can no longer start programs itself.
-- **Familiar.** Laid out like Activator: places, triggers and an action picker,
-  with search, Recently Used and a Test button on top.
-- **Respectful of iOS.** Unassigned buttons do exactly what they always did,
-  waking the phone always works, and Emergency SOS is never touched.
-- **Extensible.** Other packages can add their own actions with a single plist
-  ([EXTENSIONS.md](EXTENSIONS.md)), like EQELinker's EQE presets. From 2.0, tweaks can also add triggers,
-  actions and a settings button with [libtriggr](https://github.com/Jond-ie/libtriggr).
-- **Source:** 1.x is open source under GPL-3.0 (this repo). 2.0 and later are closed source.
+## Ideas to start with
+
+| When… | …do this |
+|---|---|
+| Double-tap the status bar | Flashlight on / off |
+| Hold volume down | Play / pause music |
+| Shake | Jump back to the last app |
+| Slide in from the left edge | App Switcher |
+| Three-finger tap in any app | Screenshot |
+| Flick up on the Camera icon | Start screen recording |
+| Your AirPods connect | Open your music app and play |
+| You join your home Wi-Fi | Low Power Mode off |
+| Weekdays at 23:00 | Do Not Disturb and Dark Mode on |
+| Plug in the charger | Say the battery level out loud |
+| Lock + volume up | A menu of your favourite actions |
+| Cover the top of the phone | Mute, only if music is playing |
+
+## Everything it can do
+
+Buttons, swipes, multi-finger gestures, sensors and events (a Wi-Fi network, a charger, your AirPods) can run
+almost anything on the phone, as a single action or a list of steps with If / Otherwise and Only If conditions.
+**[See the full list on the website](https://jond-ie.github.io/repo/triggr/)**, with what's new in 2.0 marked.
 
 ## Install
 
-1. Add **https://jond-ie.github.io/repo/** to Sileo or Zebra (or open the link on
-   your device and tap **Add to Sileo** / **Add to Zebra**).
+1. Add **https://jond-ie.github.io/repo/** to Sileo or Zebra (or open it on your iPhone and tap **Add to Sileo** / **Add to Zebra**).
 2. Install **Triggr**. AltList and PreferenceLoader come with it.
-3. Respring, then open **Triggr** from your Home Screen or **Settings → Triggr**.
+3. Respring, then open **Triggr** from the Home Screen or **Settings → Triggr**.
 
-## Features at a glance
+## Light by design
 
-| | |
-|---|---|
-| **Buttons** | Home (single, double, triple, short / long hold), Lock / Side (single, double, triple, hold), Volume (presses, holds, sequences, both), **Lock / Side + Volume** (press or hold), Mute switch, Touch ID |
-| **Screen edges** | Slide in from the left or right edge, with one or two fingers, over apps too |
-| **Status bar** | Tap, double tap, hold, each also per left / right half; swipe left / right |
-| **Home Screen** | Icon flicks (per app too), pinch, spread, two-finger swipes, double tap on empty space |
-| **Sensors** | Shake, proximity cover and wave |
-| **Events** | Charger, headphones, Wi-Fi, Bluetooth, Low Power, lock / unlock, screen on / off, a specific network or device, battery level, an app opened, any notification or one from an app, phone calls (incoming, answered, outgoing, ended), music (started, paused, song changed), a time of day or chosen weekdays |
-| **Actions** | System and power actions, 14 switches (toggle / on / off), media and AirPlay, brightness and volume levels, brightness steps, open apps, Settings pages, Shortcuts and URLs, messages, speech, shell commands, menus, extensions |
-| **Places** | Anywhere, At Home Screen, In Apps, At Lock Screen, In Specific Apps |
-| **Extras** | Sequences with pauses, menus, profiles, export / import, block list, action banners, local API and `triggr` command |
+- **Zero cost until you use it.** Every sensor, timer and gesture only exists while something is assigned to it. Nothing polls. Apps only get a tiny relay that stays silent unless a status bar or shake trigger is assigned.
+- **Your buttons stay yours.** Unassigned buttons work exactly like before, waking the phone always works, and Emergency SOS is never touched.
+- **Private.** Nothing listens on the network. Notification triggers only see which app posted, never what it says. The optional API is off by default and can only run your own setup.
 
-## Tested devices
+## Tested on
 
-Triggr supports every arm64 and arm64e iPhone and iPad on iOS 15–18 with a
-rootless jailbreak (Dopamine). It has been tested on:
+Every arm64 and arm64e iPhone on iOS 15–18 with Dopamine. Checked by hand on:
 
-| Chip | Architecture | Buttons | iOS |
-|---|---|---|---|
-| A10 | arm64 | Home button / Touch ID | 15.8.6 |
-| A11 | arm64 | Home button / Touch ID | 16.7 |
-| A13 | arm64e | Face ID | 16.2 |
-| A13 | arm64e | Home button / Touch ID | 17.5.1 |
-| A13 | arm64e | Face ID | 18.6.2 |
+| Chip | Buttons | iOS |
+|---|---|---|
+| A10 | Home / Touch ID | 15.8.6 |
+| A11 | Home / Touch ID | 16.7 |
+| A13 | Face ID | 16.2 |
+| A13 | Home / Touch ID | 17.5.1 |
+| A13 | Face ID | 18.6.2 |
 
-On Face ID devices the Home button and Touch ID groups are hidden and the lock
-button is the **Side Button**. If anything ever lands you in safe mode, uninstall
-Triggr from your package manager and please [report it](../../issues/new/choose).
+On Face ID iPhones the Home button and Touch ID groups are hidden and the lock button is the **Side Button**.
+If anything ever puts you in safe mode, uninstall Triggr from your package manager and [report it](../../issues/new/choose).
 
-## Documentation
+## More screenshots
+
+<p>
+  <img src="screenshots/1-main.png" alt="Main page with trigger search" width="200">
+  <img src="screenshots/14-onlyif.png" alt="Only If conditions" width="200">
+  <img src="screenshots/11-edges.png" alt="Screen edges" width="200">
+  <img src="screenshots/10-combos.png" alt="Lock + Volume combos" width="200">
+  <img src="screenshots/4-statusbar.png" alt="Status Bar triggers" width="200">
+  <img src="screenshots/15-actionbutton.png" alt="Action button" width="200">
+  <img src="screenshots/7-app.png" alt="One app's own triggers" width="200">
+  <img src="screenshots/16-libtriggr.png" alt="Actions from other tweaks via libtriggr" width="200">
+</p>
+
+<details>
+<summary><strong>Full documentation</strong> (every page, trigger and action)</summary>
+
+
+The details for every page, trigger and action. Written for 1.5; 2.0 adds to it (see the lists above).
 
 ### Getting around
 
@@ -300,7 +278,7 @@ your events, and shell commands. Remove anything you don't want public.
 
 ## Building
 
-Install from [John's Repo](https://jond-ie.github.io/repo/) unless you want to
+Install from [Jond-ie's repo](https://jond-ie.github.io/repo/) unless you want to
 change the code. You need [Theos](https://theos.dev/docs/installation) with an iOS
 SDK (built against 16.5 from [theos/sdks](https://github.com/theos/sdks)) and the
 rootless scheme; AltList is vendored in `vendor/` for linking.
@@ -320,8 +298,11 @@ newer).
 The 1.x source in this repo is free software under the [GNU General Public License v3.0](LICENSE). Triggr 2.0
 and later are closed source; [libtriggr](https://github.com/Jond-ie/libtriggr) is MIT.
 
-- **Triggr** by **John d_ie** ([John's Repo](https://jond-ie.github.io/repo/)).
+- **Triggr** by **Jond-ie** ([Jond-ie's repo](https://jond-ie.github.io/repo/)).
 - Inspired by **Activator** by Ryan Petrich.
+- **Snapper 3** and **CopyLog** actions contributed by [@qnblackcat](https://github.com/qnblackcat) in #4.
 - **[AltList](https://github.com/opa334/AltList)** by opa334 (Lars Fröder), MIT
   License; its files in `vendor/` keep their own license ([vendor/AltList-LICENSE](vendor/AltList-LICENSE)).
 - Built with [Theos](https://theos.dev/).
+
+</details>
