@@ -10,7 +10,7 @@
 <p align="center">
   <a href="https://jond-ie.github.io/repo/triggr/"><img src="https://img.shields.io/badge/Website-Triggr-blue" alt="Website"></a>
   <a href="https://jond-ie.github.io/repo/"><img src="https://img.shields.io/badge/Install-Jond--ie's%20repo-blue" alt="Install from Jond-ie's repo"></a>
-  <a href="https://github.com/Jond-ie/triggr-beta/releases"><img src="https://img.shields.io/badge/latest-2.0.0%20beta%208-orange" alt="2.0 Beta 8"></a>
+  <a href="https://github.com/Jond-ie/triggr-beta/releases"><img src="https://img.shields.io/badge/latest-2.0.0%20beta%209-orange" alt="2.0 Beta 9"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/1.x%20source-GPLv3-lightgrey.svg" alt="GPL-3.0"></a>
 </p>
 
