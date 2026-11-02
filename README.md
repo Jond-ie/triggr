@@ -4,13 +4,13 @@
 
 <p align="center">
   <b>Make any button, gesture or event do anything you want.</b><br>
-  Like Activator, rebuilt for iOS 15–18 · Rootless (Dopamine) · Touch ID and Face ID
+  Like Activator, rebuilt for iOS 15–27 · Rootless and RootHide · Touch ID and Face ID
 </p>
 
 <p align="center">
   <a href="https://jond-ie.github.io/repo/triggr/"><img src="https://img.shields.io/badge/Website-Triggr-blue" alt="Website"></a>
   <a href="https://jond-ie.github.io/repo/"><img src="https://img.shields.io/badge/Install-Jond--ie's%20repo-blue" alt="Install from Jond-ie's repo"></a>
-  <a href="https://github.com/Jond-ie/triggr-beta/releases"><img src="https://img.shields.io/badge/latest-2.0.0%20beta%209-orange" alt="2.0 Beta 9"></a>
+  <a href="https://jond-ie.github.io/repo/depictions/com.johndie.triggr.html"><img src="https://img.shields.io/badge/latest-2.0.0-brightgreen" alt="Latest: 2.0.0"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/1.x%20source-GPLv3-lightgrey.svg" alt="GPL-3.0"></a>
 </p>
 
@@ -21,8 +21,8 @@
 </p>
 
 > **This repo** holds the open 1.x source (GPLv3) and is the place for [bug reports and requests](../../issues).
-> Triggr 2.0 and later are closed source; get them from [the repo](https://jond-ie.github.io/repo/) or
-> [triggr-beta](https://github.com/Jond-ie/triggr-beta/releases) (RootHide builds there too, untested).
+> Triggr 2.0 and later are closed source; get them from [the repo](https://jond-ie.github.io/repo/) (Rootless and RootHide).
+> Betas and their feedback live in [triggr-beta](https://github.com/Jond-ie/triggr-beta).
 > Tweak developers: [libtriggr](https://github.com/Jond-ie/libtriggr) (MIT).
 
 ## How it works
@@ -70,7 +70,7 @@ almost anything on the phone, as a single action or a list of steps with If / Ot
 
 ## Tested on
 
-Every arm64 and arm64e iPhone on iOS 15–18 with Dopamine. Checked by hand on:
+Every arm64 and arm64e iPhone on iOS 15–27 with a Rootless or RootHide jailbreak. Checked by hand on:
 
 | Chip | Buttons | iOS |
 |---|---|---|
@@ -78,7 +78,10 @@ Every arm64 and arm64e iPhone on iOS 15–18 with Dopamine. Checked by hand on:
 | A11 | Home / Touch ID | 16.7 |
 | A13 | Face ID | 16.2 |
 | A13 | Home / Touch ID | 17.5.1 |
+| A12 | Face ID | 16.0.3 |
 | A13 | Face ID | 18.6.2 |
+
+iOS 18.6.2, 26.6.2 and 27.0.1 were also checked in virtual iPhones (RootHide).
 
 On Face ID iPhones the Home button and Touch ID groups are hidden and the lock button is the **Side Button**.
 If anything ever puts you in safe mode, uninstall Triggr from your package manager and [report it](../../issues/new/choose).
