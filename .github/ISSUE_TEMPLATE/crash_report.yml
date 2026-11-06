@@ -1,58 +1,45 @@
 name: Crash report
-description: Triggr, SpringBoard or Settings crashed, or you ended up in safe mode.
+description: Triggr crashed, or your phone ended up in safe mode.
 title: "[Crash] "
 labels: ["crash"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for testing! Crash logs are in **Settings → Privacy & Security → Analytics & Improvements → Analytics Data**. Look for an entry from the time of the crash with **SpringBoard**, **Preferences** or **Triggr** in the name.
-        **Before posting, remove anything personal** (e.g. Wi-Fi or Bluetooth names, shell commands).
+        Crash logs are in **Settings > Privacy & Security > Analytics & Improvements > Analytics Data**. Pick the entry from the time of the crash with **SpringBoard, Preferences or Triggr** in its name, and attach it as a file.
+        Before posting, remove anything personal, such as Wi-Fi or Bluetooth names.
   - type: input
     id: device
     attributes:
-      label: Device model
-      placeholder: e.g. iPhone 8 Plus, iPhone 12
+      label: Device
+      placeholder: e.g. iPhone XR
     validations:
       required: true
   - type: input
     id: ios
     attributes:
-      label: iOS version
-      placeholder: e.g. 16.7.2
-    validations:
-      required: true
-  - type: input
-    id: jailbreak
-    attributes:
-      label: Jailbreak and version
-      placeholder: e.g. Dopamine 2.x
+      label: iOS version and jailbreak
+      placeholder: e.g. iOS 16.2, Dopamine 2.4 (Rootless)
     validations:
       required: true
   - type: input
     id: version
     attributes:
       label: Triggr version
-      placeholder: e.g. 1.0.0~beta2
+      description: Shown in Sileo or Zebra under the package.
+      placeholder: e.g. 1.0.0
     validations:
       required: true
   - type: textarea
-    id: steps
+    id: what
     attributes:
-      label: What were you doing?
-      description: The trigger and actions involved, and whether it happens every time.
+      label: What were you doing when it crashed?
     validations:
       required: true
   - type: textarea
     id: log
     attributes:
       label: Crash log
-      description: Paste the crash log text (or attach the .ips file).
-      render: text
-  - type: checkboxes
-    id: privacy
-    attributes:
-      label: Privacy
-      options:
-        - label: I checked the log and removed anything personal.
-          required: true
+      description: Drag the file here.
+    validations:
+      required: true
