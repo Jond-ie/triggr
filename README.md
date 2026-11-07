@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="https://jond-ie.github.io/repo/triggr/"><img src="https://img.shields.io/badge/Website-Triggr-blue" alt="Website"></a>
-  <a href="https://jond-ie.github.io/repo/"><img src="https://img.shields.io/badge/Install-pwnapple%20repo-blue" alt="Install from the pwnapple repo"></a>
+  <a href="https://jond-ie.github.io/repo/"><img src="https://img.shields.io/badge/Install-Jond__ie%20repo-blue" alt="Install from the Jond_ie repo"></a>
   <a href="https://jond-ie.github.io/repo/depictions/com.johndie.triggr.html"><img src="https://img.shields.io/badge/latest-2.0.0-brightgreen" alt="Latest: 2.0.0"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/1.x%20source-GPLv3-lightgrey.svg" alt="GPL-3.0"></a>
 </p>
@@ -281,7 +281,7 @@ your events, and shell commands. Remove anything you don't want public.
 
 ## Building
 
-Install from the [pwnapple repo](https://jond-ie.github.io/repo/) unless you want to
+Install from the [Jond_ie repo](https://jond-ie.github.io/repo/) unless you want to
 change the code. You need [Theos](https://theos.dev/docs/installation) with an iOS
 SDK (built against 16.5 from [theos/sdks](https://github.com/theos/sdks)) and the
 rootless scheme; AltList is vendored in `vendor/` for linking.
@@ -300,7 +300,7 @@ newer).
 The 1.x source in this repo is free software under the [GNU General Public License v3.0](LICENSE). Triggr 2.0
 and later are closed source; [libtriggr](https://github.com/Jond-ie/libtriggr) is MIT.
 
-- **Triggr** by **Jond_ie** ([pwnapple repo](https://jond-ie.github.io/repo/)).
+- **Triggr** by **Jond_ie** ([Jond_ie repo](https://jond-ie.github.io/repo/)).
 - Inspired by **Activator** by Ryan Petrich.
 - **Snapper 3** and **CopyLog** actions contributed by [@qnblackcat](https://github.com/qnblackcat) in #4.
 - **[AltList](https://github.com/opa334/AltList)** by opa334 (Lars Fröder), MIT
