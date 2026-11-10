@@ -10,7 +10,7 @@
 <p align="center">
   <a href="https://jond-ie.github.io/repo/triggr/"><img src="https://img.shields.io/badge/Website-Triggr-blue" alt="Website"></a>
   <a href="https://jond-ie.github.io/repo/"><img src="https://img.shields.io/badge/Install-Jond__ie%20repo-blue" alt="Install from the Jond_ie repo"></a>
-  <a href="https://jond-ie.github.io/repo/depictions/com.johndie.triggr.html"><img src="https://img.shields.io/badge/latest-2.0.0-brightgreen" alt="Latest: 2.0.0"></a>
+  <a href="https://jond-ie.github.io/repo/depictions/com.johndie.triggr.html"><img src="https://img.shields.io/badge/latest-2.1.0-brightgreen" alt="Latest: 2.1.0"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/1.x%20source-GPLv3-lightgrey.svg" alt="GPL-3.0"></a>
 </p>
 
@@ -284,7 +284,7 @@ your events, and shell commands. Remove anything you don't want public.
 Install from the [Jond_ie repo](https://jond-ie.github.io/repo/) unless you want to
 change the code. You need [Theos](https://theos.dev/docs/installation) with an iOS
 SDK (built against 16.5 from [theos/sdks](https://github.com/theos/sdks)) and the
-rootless scheme; AltList is vendored in `vendor/` for linking.
+Rootless scheme; AltList is vendored in `vendor/` for linking.
 
 ```bash
 make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless

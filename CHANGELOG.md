@@ -1,6 +1,18 @@
 # Changelog
 
-Each version as published on the pwnapple repo (https://jond-ie.github.io/repo/). Dates are when the package went up on the repo.
+Each version as published on the Jond_ie repo (https://jond-ie.github.io/repo/). Dates are when the package went up on the repo.
+
+## 2.1.0
+
+- **Try a trigger without pressing it:** in Your Setup, swipe right on a trigger, or touch and hold it, and choose Run Now. Its actions run straight away, so you can check what it does.
+- **Asks before restarting:** when a trigger is about to respring, restart or turn off your iPhone, Triggr asks first, so a stray button press can't close everything. Safe Mode doesn't ask, so it still works in one go when a tweak gets stuck. Turn it off in Options → Ask Before Restarting.
+- **Undo:** after you remove a trigger, an Undo button appears at the top right for a few seconds. It brings the trigger back with its actions and Only If conditions.
+- **Clearer button notes:** before you pick an action for a button, the page says what the button normally does and that your action will replace it. Add Only If to keep the normal job some of the time.
+- **Your last picks come first:** when you choose an action, the ones you used most recently are at the top.
+- **A clearer main page:** it says how many triggers are on, and every trigger in Your Setup shows an icon and what it does.
+- **What's New and Guide** are now at the top of the page. What's New lists the changes in every version, in plain words.
+- **A short welcome screen** explains how Triggr works in four steps. It shows once, the first time you open Triggr's settings.
+- **Help & Support** at the bottom of the page: report a problem, get in touch, or support Triggr.
 
 ## 2.0.0 (2026-11-01)
 
